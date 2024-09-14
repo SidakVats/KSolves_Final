@@ -34,15 +34,47 @@ export default function AddEvent() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+  
+    // Create a new FormData object
+    const data = new FormData();
+    
+    // Append all form fields to the FormData object
+    Object.keys(formData).forEach((key) => {
+      data.append(key, formData[key]);
+    });
+  
     axios
-      .post("/createEvent", formData)
+      .post("/createEvent", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
         console.log("Event posted successfully:", response.data);
+        alert("Event created successfully!"); // Show success alert
+  
+        // Reset the form fields after alert is closed
+        setFormData({
+          owner: user ? user.name : "Creator",
+          title: "",
+          optional: "",
+          description: "",
+          organizedBy: "",
+          eventDate: "",
+          eventTime: "",
+          location: "",
+          ticketPrice: 0,
+          image: "",
+          likes: 0,
+        });
       })
       .catch((error) => {
         console.error("Error posting event:", error);
       });
   };
+  
+  
+  
 
   return (
     <div className="flex flex-col p-3 lg:p-10 mt-10">

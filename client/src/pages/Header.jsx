@@ -58,7 +58,7 @@ export default function Header() {
           <Link to={'/'} className="flex item-center ">
             <img src="../src/assets/logo.png" alt="" className='w-40 h-14'/>
           </Link>
-          <div  className='flex bg-white rounded py-2.5 px-4 w-1/3 gap-4 items-center shadow-md shadow-gray-200'>
+          <div  className='lg:flex hidden  bg-white rounded py-2.5 px-4 w-1/3 gap-4 items-center shadow-md shadow-gray-200'>
             
             <button>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

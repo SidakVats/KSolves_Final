@@ -9,8 +9,6 @@ const cookieParser = require("cookie-parser");
 const multer = require("multer");
 const path = require("path");
 
-const Ticket = require("./models/Ticket");
-
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
@@ -35,12 +33,7 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-
 const upload = multer({ storage });
-
-app.get("/test", (req, res) => {
-  res.json("test ok");
-});
 
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
@@ -136,6 +129,9 @@ app.post("/createEvent", upload.single("image"), async (req, res) => {
   }
 });
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
 app.get("/createEvent", async (req, res) => {
   try {
     const events = await Event.find();
@@ -155,27 +151,6 @@ app.get("/event/:id", async (req, res) => {
   }
 });
 
-app.post("/event/:eventId", (req, res) => {
-  const eventId = req.params.eventId;
-
-  Event.findById(eventId)
-    .then((event) => {
-      if (!event) {
-        return res.status(404).json({ message: "Event not found" });
-      }
-
-      event.likes += 1;
-      return event.save();
-    })
-    .then((updatedEvent) => {
-      res.json(updatedEvent);
-    })
-    .catch((error) => {
-      console.error("Error liking the event:", error);
-      res.status(500).json({ message: "Server error" });
-    });
-});
-
 app.get("/events", (req, res) => {
   Event.find()
     .then((events) => {
@@ -185,72 +160,6 @@ app.get("/events", (req, res) => {
       console.error("Error fetching events:", error);
       res.status(500).json({ message: "Server error" });
     });
-});
-
-app.get("/event/:id/ordersummary", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const event = await Event.findById(id);
-    res.json(event);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch event from MongoDB" });
-  }
-});
-
-app.get("/event/:id/ordersummary/paymentsummary", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const event = await Event.findById(id);
-    res.json(event);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch event from MongoDB" });
-  }
-});
-
-app.post("/tickets", async (req, res) => {
-  try {
-    const ticketDetails = req.body;
-    const newTicket = new Ticket(ticketDetails);
-    await newTicket.save();
-    return res.status(201).json({ ticket: newTicket });
-  } catch (error) {
-    console.error("Error creating ticket:", error);
-    return res.status(500).json({ error: "Failed to create ticket" });
-  }
-});
-
-app.get("/tickets/:id", async (req, res) => {
-  try {
-    const tickets = await Ticket.find();
-    res.json(tickets);
-  } catch (error) {
-    console.error("Error fetching tickets:", error);
-    res.status(500).json({ error: "Failed to fetch tickets" });
-  }
-});
-
-app.get("/tickets/user/:userId", (req, res) => {
-  const userId = req.params.userId;
-
-  Ticket.find({ userid: userId })
-    .then((tickets) => {
-      res.json(tickets);
-    })
-    .catch((error) => {
-      console.error("Error fetching user tickets:", error);
-      res.status(500).json({ error: "Failed to fetch user tickets" });
-    });
-});
-
-app.delete("/tickets/:id", async (req, res) => {
-  try {
-    const ticketId = req.params.id;
-    await Ticket.findByIdAndDelete(ticketId);
-    res.status(204).send();
-  } catch (error) {
-    console.error("Error deleting ticket:", error);
-    res.status(500).json({ error: "Failed to delete ticket" });
-  }
 });
 
 const PORT = process.env.PORT || 4000;

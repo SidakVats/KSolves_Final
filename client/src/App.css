@@ -1,5 +1,4 @@
 .container{
-  
   width: 80vw; /* 80% of the viewport width */
   max-width: 1200px; /* maximum width for the container */
   height: 650px;
@@ -83,7 +82,6 @@
 }
 
 /* icon positioning ends */
-
 .form-group{
   padding-top: 20px;
 }
