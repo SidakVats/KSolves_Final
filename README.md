@@ -1,0 +1,1 @@
+# ksolves - Event Management System
